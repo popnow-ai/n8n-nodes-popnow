@@ -1,0 +1,35 @@
+# n8n-nodes-popnow
+
+> `n8n-nodes-popnow` is the n8n community node for PopNow (https://popnow.ai), a single API for AI video, image, music and speech generation (Kling, Seedance, Wan, Vidu, MiniMax, Nano Banana, GPT Image, Flux, Suno and more). It adds a **PopNow** node and a **PopNow API** credential to self-hosted n8n. MIT licensed. Not on npm yet (release coming).
+
+## Install
+
+- Self-hosted n8n: `cd ~/.n8n/nodes && npm install github:popnow-ai/n8n-nodes-popnow#release`, then restart n8n. The `release` branch holds the built package.
+- Docker: run the same command inside the container (`docker exec`), or build a custom image that installs it under /opt and sets `N8N_CUSTOM_EXTENSIONS`.
+- n8n Cloud or no install: import `examples/http-request-workflow.json` (built-in HTTP Request, Wait, If and Set nodes) with a Header Auth credential `Authorization: Bearer sk-popnow-...`.
+
+## Credential
+
+- API key from https://popnow.ai/api/console/keys (`sk-popnow-...`), sent as `Authorization: Bearer`.
+- Base URL default `https://api.popnow.ai`. Saving the credential calls `GET /api/v1/chat/credit` (free).
+
+## Node operations
+
+- Image / Video / Audio > Generate: `POST /api/v1/jobs/quote` -> per-item credit limit (default 200 credits) -> `POST /api/v1/jobs/createTask` (Idempotency-Key, quoteId, expectedCredits, optional callBackUrl and X-PopNow-Retention; `?wait=50` for image and audio) -> poll `GET /api/v1/jobs/recordInfo` -> download `output.assets[].url` into binary fields `data`, `data_1`, ...
+- Task > Get (`jobs/recordInfo`, optional wait and download); Task > Retry (`POST /api/v1/jobs/retry`).
+- File > Upload: `POST /api/v1/common/upload-url`, PUT to the signed URL, `POST /api/v1/files/{fileId}/commit` -> `popnow://f/fil_...`.
+- Model > Get Many (`GET /api/v1/models`), Get (`GET /api/v1/models/{model}`), Get Quote (`jobs/quote`).
+- Account > Get Balance (`GET /api/v1/chat/credit`): availableCredits, heldCredits, totalCredits and USD amounts.
+
+## Facts
+
+- Model IDs look like `<maker>/<model>/<task>`, e.g. `alibaba/z-image-turbo/text-to-image`, `kling/3.0/image-to-video`, `suno/v6/text-to-audio`.
+- 1 credit = $0.01; same prices and wallet as popnow.ai; failed or expired tasks are refunded.
+- Responses use the envelope `{code,msg,data,request_id}`; branch on `code`, never on `msg`.
+- Output links are signed and last about 20 minutes; the node downloads them without the API key.
+
+## Links
+
+- Docs: https://popnow.ai/docs · n8n guide: https://popnow.ai/docs/n8n · OpenAPI: https://popnow.ai/docs/openapi.yaml · llms.txt: https://popnow.ai/llms.txt
+- MCP server: https://popnow.ai/mcp
+- Other repos: https://github.com/popnow-ai/popnow-js, https://github.com/popnow-ai/popnow-python, https://github.com/popnow-ai/popnow-api, https://github.com/popnow-ai/popnow-mcp

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: PopNow API docs
+    url: https://popnow.ai/docs
+    about: Guides, model list and API reference.
+  - name: Account, billing or model questions
+    url: https://popnow.ai/contact
+    about: Contact PopNow support for anything that is not an issue with the n8n node.

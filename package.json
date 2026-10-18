@@ -1,0 +1,66 @@
+{
+	"name": "n8n-nodes-popnow",
+	"version": "0.1.0",
+	"description": "n8n community node for PopNow (popnow.ai): AI video, image, music and speech generation with Kling, Seedance, Wan, Nano Banana, Flux, Suno and more, priced in credits before every run.",
+	"license": "MIT",
+	"homepage": "https://github.com/popnow-ai/n8n-nodes-popnow#readme",
+	"keywords": [
+		"n8n-community-node-package",
+		"n8n",
+		"popnow",
+		"ai",
+		"ai-video-generator",
+		"image-generation",
+		"video-generation",
+		"text-to-image",
+		"text-to-video",
+		"image-to-video",
+		"text-to-speech",
+		"music-generation"
+	],
+	"author": {
+		"name": "PopNow",
+		"email": "support@popnow.ai",
+		"url": "https://popnow.ai"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/popnow-ai/n8n-nodes-popnow.git"
+	},
+	"bugs": {
+		"url": "https://github.com/popnow-ai/n8n-nodes-popnow/issues"
+	},
+	"scripts": {
+		"build": "n8n-node build",
+		"build:watch": "tsc --watch",
+		"dev": "n8n-node dev",
+		"lint": "n8n-node lint",
+		"lint:fix": "n8n-node lint --fix",
+		"test": "n8n-node build && node --test test/*.test.js"
+	},
+	"files": [
+		"dist",
+		"!dist/assets",
+		"!dist/package.json",
+		"!dist/**/*.tsbuildinfo"
+	],
+	"n8n": {
+		"n8nNodesApiVersion": 1,
+		"strict": true,
+		"credentials": [
+			"dist/credentials/PopNowApi.credentials.js"
+		],
+		"nodes": [
+			"dist/nodes/PopNow/PopNow.node.js"
+		]
+	},
+	"devDependencies": {
+		"@n8n/node-cli": "0.51.3",
+		"eslint": "9.32.0",
+		"prettier": "3.6.2",
+		"typescript": "5.9.2"
+	},
+	"peerDependencies": {
+		"n8n-workflow": "*"
+	}
+}

@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # Install scripts stay off (also set in .npmrc): the dev tooling pulls in native packages
+      # and a pnpm-only preinstall check that are not needed to lint, build or test this package.
+      - run: npm ci --ignore-scripts
+
+      - name: Lint (n8n community node rules)
+        run: npm run lint
+
+      - name: Build and test
+        run: npm test
+
+      - name: Check the package contents
+        run: npm pack --dry-run

@@ -1,0 +1,51 @@
+name: Release branch
+
+# Keeps the `release` branch in step with main. It holds the built package (no sources, no dev
+# tooling), so `npm install github:popnow-ai/n8n-nodes-popnow#release` works without a build step.
+# Nothing is published to npm.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-branch
+  cancel-in-progress: false
+
+jobs:
+  release-branch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci --ignore-scripts
+
+      - name: Lint (n8n community node rules)
+        run: npm run lint
+
+      - name: Build and test
+        run: npm test
+
+      - name: Prepare the release branch contents
+        run: node scripts/build-release-branch.mjs "$RUNNER_TEMP/release"
+
+      - name: Push the release branch
+        working-directory: ${{ runner.temp }}/release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git init -q -b release
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Build of main at ${GITHUB_SHA::7}"
+          git push --force "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" release

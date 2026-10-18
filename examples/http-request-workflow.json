@@ -1,0 +1,219 @@
+{
+  "name": "PopNow: generate and get the file",
+  "nodes": [
+    {
+      "id": "b1f0c1a2-0001-4c55-9a10-000000000001",
+      "name": "Start",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "b1f0c1a2-0002-4c55-9a10-000000000002",
+      "name": "Create task",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.popnow.ai/api/v1/jobs/createTask",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Idempotency-Key",
+              "value": "={{ $execution.id }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"model\": \"alibaba/z-image-turbo/text-to-image\",\n  \"input\": {\n    \"prompt\": \"A small red fox curled up in a teacup, soft morning light, studio photo\",\n    \"aspect_ratio\": \"1:1\"\n  }\n}",
+        "options": {}
+      }
+    },
+    {
+      "id": "b1f0c1a2-0003-4c55-9a10-000000000003",
+      "name": "Wait 5 s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        440,
+        0
+      ],
+      "parameters": {
+        "amount": 5
+      },
+      "webhookId": "4d3c2b1a-5e6f-4a7b-8c9d-0e1f2a3b4c5d"
+    },
+    {
+      "id": "b1f0c1a2-0004-4c55-9a10-000000000004",
+      "name": "Check task",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        0
+      ],
+      "parameters": {
+        "url": "https://api.popnow.ai/api/v1/jobs/recordInfo",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "taskId",
+              "value": "={{ $('Create task').item.json.data.taskId }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "b1f0c1a2-0005-4c55-9a10-000000000005",
+      "name": "Finished?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        880,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "c0ffee00-0000-4000-8000-000000000001",
+              "leftValue": "={{ ['succeeded', 'failed', 'canceled', 'expired'].includes($json.data.state) && !($json.data.output?.assets ?? []).some(a => a.pending && !a.unavailable) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "b1f0c1a2-0006-4c55-9a10-000000000006",
+      "name": "File URL",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1100,
+        -100
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c0ffee00-0000-4000-8000-000000000002",
+              "name": "state",
+              "value": "={{ $json.data.state }}",
+              "type": "string"
+            },
+            {
+              "id": "c0ffee00-0000-4000-8000-000000000003",
+              "name": "fileUrl",
+              "value": "={{ $json.data.output?.assets?.[0]?.url ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "c0ffee00-0000-4000-8000-000000000004",
+              "name": "error",
+              "value": "={{ $json.data.errorMessage ?? '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Create task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create task": {
+      "main": [
+        [
+          {
+            "node": "Wait 5 s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 5 s": {
+      "main": [
+        [
+          {
+            "node": "Check task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check task": {
+      "main": [
+        [
+          {
+            "node": "Finished?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finished?": {
+      "main": [
+        [
+          {
+            "node": "File URL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 5 s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -1,0 +1,789 @@
+{
+	"alibaba/z-image-turbo/text-to-image": {
+		"model": "alibaba/z-image-turbo/text-to-image",
+		"modality": "image",
+		"taskTimeoutSeconds": 1800,
+		"inputSchema": {
+			"type": "object",
+			"required": [
+				"prompt"
+			],
+			"x-pricing": {
+				"billingMode": "per_unit",
+				"variantFields": [
+					"enable_prompt_expansion"
+				],
+				"variantKeyOmitDefaults": [
+					"enable_prompt_expansion"
+				]
+			},
+			"properties": {
+				"seed": {
+					"type": "integer",
+					"x-ui": {
+						"order": 10,
+						"widget": "number",
+						"affects_price": false
+					},
+					"maximum": 2147483647,
+					"minimum": 0,
+					"description": "Random seed for controlled comparisons. Omit it to let each run pick its own."
+				},
+				"prompt": {
+					"type": "string",
+					"x-ui": {
+						"rows": 4,
+						"order": 100,
+						"widget": "textarea",
+						"primary": true
+					},
+					"maxLength": 1000,
+					"minLength": 1,
+					"description": "Describe the image to generate: subject, composition, style, and lighting."
+				},
+				"aspect_ratio": {
+					"enum": [
+						"1:1",
+						"4:3",
+						"3:4",
+						"16:9",
+						"9:16"
+					],
+					"type": "string",
+					"x-ui": {
+						"order": 80,
+						"widget": "select"
+					},
+					"default": "1:1",
+					"description": "Aspect ratio of the generated image."
+				},
+				"output_format": {
+					"enum": [
+						"png"
+					],
+					"type": "string",
+					"x-ui": {
+						"order": 30,
+						"widget": "radio"
+					},
+					"default": "png",
+					"description": "File format of the returned image."
+				},
+				"enable_prompt_expansion": {
+					"type": "boolean",
+					"x-ui": {
+						"order": 50,
+						"widget": "switch",
+						"advanced": true,
+						"affects_price": true
+					},
+					"default": false,
+					"description": "Expand the prompt into a fuller description before generating. Requests with it on are billed at the prompt-expansion rate."
+				}
+			},
+			"additionalProperties": false
+		}
+	},
+	"bytedance/seedance-1.5-pro/image-to-video": {
+		"model": "bytedance/seedance-1.5-pro/image-to-video",
+		"modality": "video",
+		"taskTimeoutSeconds": 10800,
+		"inputSchema": {
+			"additionalProperties": false,
+			"properties": {
+				"aspect_ratio": {
+					"default": "16:9",
+					"description": "Aspect ratio of the generated video.",
+					"enum": [
+						"21:9",
+						"16:9",
+						"4:3",
+						"1:1",
+						"3:4",
+						"9:16"
+					],
+					"type": "string",
+					"x-ui": {
+						"affects_price": false,
+						"order": 60,
+						"widget": "select"
+					}
+				},
+				"camera_fixed": {
+					"default": false,
+					"description": "Lock the camera to produce a stable, fixed-position shot.",
+					"type": "boolean",
+					"x-ui": {
+						"affects_price": false,
+						"order": 20,
+						"widget": "switch"
+					}
+				},
+				"duration_seconds": {
+					"default": 5,
+					"description": "Clip length in seconds. This is the billed quantity.",
+					"maximum": 12,
+					"minimum": 4,
+					"type": "integer",
+					"x-ui": {
+						"advanced": false,
+						"affects_price": true,
+						"order": 40,
+						"unit": "s",
+						"widget": "slider"
+					}
+				},
+				"generate_audio": {
+					"default": true,
+					"description": "Generate a native soundtrack synchronised to the picture.",
+					"type": "boolean",
+					"x-ui": {
+						"advanced": false,
+						"affects_price": true,
+						"order": 30,
+						"widget": "switch"
+					}
+				},
+				"image_url": {
+					"contentMediaType": [
+						"image/jpeg",
+						"image/png",
+						"image/webp",
+						"image/gif"
+					],
+					"description": "URL of the image used as the first frame.",
+					"type": "string",
+					"x-ui": {
+						"affects_price": false,
+						"order": 80,
+						"widget": "upload"
+					}
+				},
+				"last_image_url": {
+					"contentMediaType": [
+						"image/jpeg",
+						"image/png",
+						"image/webp",
+						"image/gif"
+					],
+					"description": "Optional closing frame the shot has to land on (480p and 720p).",
+					"type": "string",
+					"x-ui": {
+						"affects_price": false,
+						"order": 75,
+						"widget": "upload"
+					}
+				},
+				"prompt": {
+					"description": "What to generate: subject, action, camera movement and mood.",
+					"minLength": 3,
+					"type": "string",
+					"x-ui": {
+						"affects_price": false,
+						"order": 90,
+						"primary": true,
+						"widget": "textarea"
+					}
+				},
+				"resolution": {
+					"default": "720p",
+					"description": "Output resolution. Super-resolution tiers are not offered.",
+					"enum": [
+						"480p",
+						"720p",
+						"1080p"
+					],
+					"type": "string",
+					"x-ui": {
+						"advanced": false,
+						"affects_price": true,
+						"order": 50,
+						"widget": "radio"
+					}
+				},
+				"seed": {
+					"description": "Random seed for controlled comparisons. Omit it to let each run pick its own.",
+					"maximum": 2147483647,
+					"minimum": 0,
+					"type": "integer",
+					"x-ui": {
+						"affects_price": false,
+						"order": 10,
+						"widget": "number"
+					}
+				}
+			},
+			"required": [
+				"prompt",
+				"image_url"
+			],
+			"type": "object",
+			"x-pricing": {
+				"billingMode": "variant_matrix",
+				"variantFields": [
+					"resolution",
+					"generate_audio"
+				]
+			}
+		}
+	},
+	"xai/grok-tts/text-to-speech": {
+		"model": "xai/grok-tts/text-to-speech",
+		"modality": "audio",
+		"taskTimeoutSeconds": 1800,
+		"inputSchema": {
+			"type": "object",
+			"required": [
+				"text"
+			],
+			"x-pricing": {
+				"billingMode": "per_unit",
+				"variantFields": []
+			},
+			"properties": {
+				"text": {
+					"type": "string",
+					"x-ui": {
+						"rows": 6,
+						"order": 100,
+						"widget": "textarea",
+						"primary": true
+					},
+					"maxLength": 15000,
+					"minLength": 1,
+					"description": "The words to be spoken, with optional speech tags such as [laugh] or <whisper>\u2026</whisper>. Billed per 1,000 characters, tags included."
+				},
+				"speed": {
+					"type": "number",
+					"x-ui": {
+						"step": 0.05,
+						"unit": "\u00d7",
+						"order": 70,
+						"widget": "slider"
+					},
+					"default": 1,
+					"maximum": 1.5,
+					"minimum": 0.7,
+					"description": "Speaking speed from 0.7 (slower) to 1.5 (faster)."
+				},
+				"bitrate": {
+					"enum": [
+						32000,
+						64000,
+						96000,
+						128000,
+						192000
+					],
+					"type": "integer",
+					"x-ui": {
+						"order": 40,
+						"widget": "select",
+						"advanced": true,
+						"enum_labels": {
+							"32000": "32 kbps",
+							"64000": "64 kbps",
+							"96000": "96 kbps",
+							"128000": "128 kbps",
+							"192000": "192 kbps"
+						}
+					},
+					"default": 128000,
+					"description": "MP3 bit rate in bits per second. Only applies to mp3."
+				},
+				"language": {
+					"enum": [
+						"auto",
+						"en",
+						"zh",
+						"ar-EG",
+						"ar-SA",
+						"ar-AE",
+						"bn",
+						"fr",
+						"de",
+						"hi",
+						"id",
+						"it",
+						"ja",
+						"ko",
+						"pt-BR",
+						"pt-PT",
+						"ru",
+						"es-MX",
+						"es-ES",
+						"tr",
+						"vi"
+					],
+					"type": "string",
+					"x-ui": {
+						"order": 80,
+						"widget": "select",
+						"enum_labels": {
+							"bn": "Bengali",
+							"de": "German",
+							"en": "English",
+							"fr": "French",
+							"hi": "Hindi",
+							"id": "Indonesian",
+							"it": "Italian",
+							"ja": "Japanese",
+							"ko": "Korean",
+							"ru": "Russian",
+							"tr": "Turkish",
+							"vi": "Vietnamese",
+							"zh": "Chinese (Mandarin)",
+							"auto": "Auto-detect",
+							"ar-AE": "Arabic (UAE)",
+							"ar-EG": "Arabic (Egypt)",
+							"ar-SA": "Arabic (Saudi Arabia)",
+							"es-ES": "Spanish (Spain)",
+							"es-MX": "Spanish (Mexico)",
+							"pt-BR": "Portuguese (Brazil)",
+							"pt-PT": "Portuguese (Portugal)"
+						}
+					},
+					"default": "auto",
+					"description": "Reading language, or auto to detect it from the text."
+				},
+				"voice_id": {
+					"enum": [
+						"ara",
+						"eve",
+						"leo",
+						"rex",
+						"sal",
+						"jpi39icg",
+						"d18jlf6v",
+						"33g9t0jl",
+						"26w6ihxi",
+						"dr8gqysu",
+						"wy0m9l5w",
+						"om17cury",
+						"x7avnu1k",
+						"bcs7l2c3",
+						"hqxr4yub",
+						"h27ltdnz",
+						"89q2pnko",
+						"73xd5dum",
+						"0p0rt7o1",
+						"hbxkrnwm",
+						"69smp8rm",
+						"yis75yfp",
+						"ekhwx401",
+						"jupvcf34",
+						"0hhfxxqq",
+						"0ih5oi34",
+						"gwnexu6y",
+						"97zmdc6s",
+						"fc7de6afcf6c",
+						"7a9ee820b342",
+						"0895a5b8ce5c",
+						"f8cf5c2c78d4",
+						"96819d0bd28d",
+						"79f3a8b96d43",
+						"78a495fdbb39",
+						"e22152e06fd8",
+						"490ea3be50b1",
+						"1f046a033914",
+						"dfe7b9e7d217",
+						"c3a2c594479e",
+						"83c6f4fea98e",
+						"34fd4dce1ba3",
+						"d634b6da3d3b",
+						"670a0c3ac005",
+						"182a91893636",
+						"d0cb9ff07d95",
+						"b1a7441b97a1",
+						"bf9fe5b5f981",
+						"b5ae17439907",
+						"a0401c9101f8",
+						"23be42535a45",
+						"abfbdf26f115",
+						"6da5baee46d0",
+						"3d030bc92a87",
+						"a13662ba951c",
+						"58d27475085e",
+						"247783ebdd51",
+						"244e27b39200",
+						"97fabd54445f",
+						"37329fd8895a",
+						"2badb5f46b1e",
+						"1b12d5daee6b",
+						"908c4626660f",
+						"4ff93971bfdc",
+						"70013edeb8e8",
+						"35c8d7f60dc8",
+						"23468361b4ef",
+						"458705c07139",
+						"41321eb41295",
+						"40f31906b23d",
+						"3a7889066fa2"
+					],
+					"type": "string",
+					"x-ui": {
+						"order": 90,
+						"widget": "select",
+						"primary": true,
+						"enum_labels": {
+							"ara": "Ara \u00b7 female \u00b7 multilingual",
+							"eve": "Eve \u00b7 female \u00b7 multilingual (default)",
+							"leo": "Leo \u00b7 male \u00b7 multilingual",
+							"rex": "Rex \u00b7 male \u00b7 multilingual",
+							"sal": "Sal \u00b7 male \u00b7 multilingual",
+							"0hhfxxqq": "Andres \u00b7 male \u00b7 Spanish",
+							"0ih5oi34": "Kasper \u00b7 male \u00b7 Danish",
+							"0p0rt7o1": "Remi \u00b7 male \u00b7 French",
+							"26w6ihxi": "Pavel \u00b7 male \u00b7 Russian",
+							"33g9t0jl": "Xia \u00b7 female \u00b7 Mandarin",
+							"69smp8rm": "Camille \u00b7 female \u00b7 French",
+							"73xd5dum": "Ananya \u00b7 female \u00b7 Hindi",
+							"89q2pnko": "Karan \u00b7 male \u00b7 Hindi",
+							"97zmdc6s": "Ida \u00b7 female \u00b7 Danish",
+							"bcs7l2c3": "Matteo \u00b7 male \u00b7 Italian",
+							"d18jlf6v": "Hao \u00b7 female \u00b7 Mandarin",
+							"dr8gqysu": "Andrei \u00b7 male \u00b7 Russian",
+							"ekhwx401": "Javier \u00b7 male \u00b7 Spanish",
+							"gwnexu6y": "Lars \u00b7 male \u00b7 Danish",
+							"h27ltdnz": "Alessandro \u00b7 male \u00b7 Italian",
+							"hbxkrnwm": "Hugo \u00b7 male \u00b7 French",
+							"hqxr4yub": "Luca \u00b7 female \u00b7 Italian",
+							"jpi39icg": "Jian \u00b7 male \u00b7 Mandarin",
+							"jupvcf34": "Diego \u00b7 male \u00b7 Spanish",
+							"om17cury": "Irina \u00b7 female \u00b7 Russian",
+							"wy0m9l5w": "Dmitri \u00b7 male \u00b7 Russian",
+							"x7avnu1k": "Enzo \u00b7 male \u00b7 Italian",
+							"yis75yfp": "Manuel \u00b7 male \u00b7 Spanish",
+							"0895a5b8ce5c": "Mai \u00b7 female \u00b7 Vietnamese",
+							"182a91893636": "Kaan \u00b7 male \u00b7 Turkish",
+							"1b12d5daee6b": "Aleksandra \u00b7 female \u00b7 Polish",
+							"1f046a033914": "Erik \u00b7 male \u00b7 Swedish",
+							"23468361b4ef": "Tariq \u00b7 male \u00b7 Arabic",
+							"23be42535a45": "Ji-yeon \u00b7 female \u00b7 Korean",
+							"244e27b39200": "Ruben \u00b7 male \u00b7 Dutch",
+							"247783ebdd51": "Noor \u00b7 female \u00b7 Dutch",
+							"2badb5f46b1e": "Jakub \u00b7 male \u00b7 Polish",
+							"34fd4dce1ba3": "Elina \u00b7 female \u00b7 Finnish",
+							"35c8d7f60dc8": "Layla \u00b7 female \u00b7 Arabic",
+							"37329fd8895a": "Mateusz \u00b7 male \u00b7 Polish",
+							"3a7889066fa2": "Lena \u00b7 female \u00b7 German",
+							"3d030bc92a87": "Rafael \u00b7 male \u00b7 Portuguese",
+							"40f31906b23d": "Niklas \u00b7 male \u00b7 German",
+							"41321eb41295": "Moritz \u00b7 male \u00b7 German",
+							"458705c07139": "Clara \u00b7 female \u00b7 German",
+							"490ea3be50b1": "Saga \u00b7 female \u00b7 Swedish",
+							"4ff93971bfdc": "Aroon \u00b7 male \u00b7 Thai",
+							"58d27475085e": "Femke \u00b7 female \u00b7 Dutch",
+							"670a0c3ac005": "Emre \u00b7 male \u00b7 Turkish",
+							"6da5baee46d0": "Beatriz \u00b7 female \u00b7 Portuguese",
+							"70013edeb8e8": "Khalid \u00b7 male \u00b7 Arabic",
+							"78a495fdbb39": "James \u00b7 male \u00b7 English",
+							"79f3a8b96d43": "Claire \u00b7 female \u00b7 English",
+							"7a9ee820b342": "Minh \u00b7 male \u00b7 Vietnamese",
+							"83c6f4fea98e": "Eero \u00b7 male \u00b7 Finnish",
+							"908c4626660f": "Krit \u00b7 male \u00b7 Thai",
+							"96819d0bd28d": "Daniel \u00b7 male \u00b7 English",
+							"97fabd54445f": "Katarzyna \u00b7 female \u00b7 Polish",
+							"a0401c9101f8": "Seo-yeon \u00b7 female \u00b7 Korean",
+							"a13662ba951c": "Thijs \u00b7 male \u00b7 Dutch",
+							"abfbdf26f115": "Mateus \u00b7 male \u00b7 Portuguese",
+							"b1a7441b97a1": "Ren \u00b7 male \u00b7 Japanese",
+							"b5ae17439907": "Min-jun \u00b7 male \u00b7 Korean",
+							"bf9fe5b5f981": "Jun-seo \u00b7 male \u00b7 Korean",
+							"c3a2c594479e": "Helmi \u00b7 female \u00b7 Finnish",
+							"d0cb9ff07d95": "Sakura \u00b7 female \u00b7 Japanese",
+							"d634b6da3d3b": "Aylin \u00b7 female \u00b7 Turkish",
+							"dfe7b9e7d217": "Valtteri \u00b7 male \u00b7 Finnish",
+							"e22152e06fd8": "Axel \u00b7 male \u00b7 Swedish",
+							"f8cf5c2c78d4": "Grace \u00b7 female \u00b7 English",
+							"fc7de6afcf6c": "Duc \u00b7 male \u00b7 Vietnamese"
+						}
+					},
+					"default": "eve",
+					"description": "Preset voice. Eve, Ara, Leo, Rex and Sal speak every supported language; the others are tuned for one language."
+				},
+				"sample_rate": {
+					"enum": [
+						8000,
+						16000,
+						22050,
+						24000,
+						44100,
+						48000
+					],
+					"type": "integer",
+					"x-ui": {
+						"order": 50,
+						"widget": "select",
+						"advanced": true,
+						"enum_labels": {
+							"8000": "8 kHz (telephony)",
+							"16000": "16 kHz",
+							"22050": "22.05 kHz",
+							"24000": "24 kHz",
+							"44100": "44.1 kHz",
+							"48000": "48 kHz"
+						}
+					},
+					"default": 24000,
+					"description": "Sample rate in Hz. 8000 for phone lines, 44100 or 48000 for studio work."
+				},
+				"output_format": {
+					"enum": [
+						"mp3",
+						"wav",
+						"pcm",
+						"mulaw",
+						"alaw"
+					],
+					"type": "string",
+					"x-ui": {
+						"order": 60,
+						"widget": "select",
+						"advanced": true,
+						"enum_labels": {
+							"mp3": "MP3",
+							"pcm": "PCM (raw, 16-bit)",
+							"wav": "WAV",
+							"alaw": "A-law (raw, telephony)",
+							"mulaw": "\u03bc-law (raw, telephony)"
+						}
+					},
+					"default": "mp3",
+					"description": "Audio encoding. pcm, mulaw and alaw are raw streams without a file header, for phone systems."
+				},
+				"text_normalization": {
+					"type": "boolean",
+					"x-ui": {
+						"order": 30,
+						"widget": "switch",
+						"advanced": true
+					},
+					"default": false,
+					"description": "Rewrite numbers, abbreviations and symbols as spoken words before reading."
+				},
+				"optimize_streaming_latency": {
+					"enum": [
+						0,
+						1,
+						2
+					],
+					"type": "integer",
+					"x-ui": {
+						"order": 20,
+						"widget": "select",
+						"advanced": true,
+						"enum_labels": {
+							"0": "0 \u2014 best quality",
+							"1": "1 \u2014 lower latency",
+							"2": "2 \u2014 lowest latency"
+						}
+					},
+					"default": 0,
+					"description": "Streaming latency level: 0 best quality, 1 smaller first chunk, 2 smallest first chunk with more quality trade-off at chunk boundaries."
+				}
+			},
+			"additionalProperties": false
+		}
+	},
+	"popnow/background-remover-v1/edit": {
+		"model": "popnow/background-remover-v1/edit",
+		"modality": "image",
+		"taskTimeoutSeconds": 1800,
+		"inputSchema": {
+			"additionalProperties": false,
+			"properties": {
+				"image_url": {
+					"contentMediaType": [
+						"image/jpeg",
+						"image/png",
+						"image/webp",
+						"image/gif"
+					],
+					"description": "Photo whose background is removed. The main subject is kept and everything else becomes transparent.",
+					"minLength": 1,
+					"type": "string",
+					"x-ui": {
+						"accept": [
+							"image/jpeg",
+							"image/png",
+							"image/webp"
+						],
+						"order": 100,
+						"primary": true,
+						"widget": "upload"
+					}
+				}
+			},
+			"required": [
+				"image_url"
+			],
+			"type": "object",
+			"x-pricing": {
+				"billingMode": "per_unit",
+				"variantFields": []
+			}
+		}
+	},
+	"alibaba/qwen-image-2.1/edit": {
+		"model": "alibaba/qwen-image-2.1/edit",
+		"modality": "image",
+		"taskTimeoutSeconds": 1800,
+		"inputSchema": {
+			"additionalProperties": false,
+			"properties": {
+				"aspect_ratio": {
+					"default": "1:1",
+					"description": "Output aspect ratio.",
+					"enum": [
+						"1:1",
+						"16:9",
+						"9:16",
+						"4:3",
+						"3:4",
+						"3:2",
+						"2:3",
+						"21:9",
+						"9:21",
+						"2:1",
+						"1:2",
+						"3:1",
+						"1:3",
+						"5:4",
+						"4:5"
+					],
+					"type": "string",
+					"x-ui": {
+						"order": 80,
+						"widget": "select"
+					}
+				},
+				"background": {
+					"default": "opaque",
+					"description": "opaque keeps a normal background; transparent returns the subject alone on a real alpha channel (needs output_format png or webp).",
+					"enum": [
+						"opaque",
+						"transparent"
+					],
+					"type": "string",
+					"x-ui": {
+						"order": 25,
+						"widget": "radio"
+					}
+				},
+				"enable_prompt_expansion": {
+					"default": true,
+					"description": "Rewrite the prompt into a fuller scene description before generating. On by default; turn it off to have the prompt followed word for word.",
+					"type": "boolean",
+					"x-ui": {
+						"order": 60,
+						"widget": "switch"
+					}
+				},
+				"image_urls": {
+					"description": "One to ten reference images. Each one you add raises the quote.",
+					"items": {
+						"contentMediaType": [
+							"image/jpeg",
+							"image/png",
+							"image/webp",
+							"image/gif"
+						],
+						"format": "uri",
+						"minLength": 1,
+						"type": "string"
+					},
+					"maxItems": 10,
+					"minItems": 1,
+					"type": "array",
+					"x-ui": {
+						"affects_price": true,
+						"max_size_mb": 10,
+						"order": 90,
+						"widget": "multi-upload"
+					}
+				},
+				"mask_url": {
+					"contentMediaType": [
+						"image/jpeg",
+						"image/png",
+						"image/webp",
+						"image/gif"
+					],
+					"description": "Optional black-and-white mask for local editing: white is the area to repaint, black is kept. Use it with exactly one reference image.",
+					"format": "uri",
+					"type": "string",
+					"x-ui": {
+						"accept": [
+							"image/png",
+							"image/jpeg",
+							"image/webp"
+						],
+						"max_size_mb": 10,
+						"order": 85,
+						"widget": "upload"
+					}
+				},
+				"output_format": {
+					"default": "jpeg",
+					"description": "Container of the returned image.",
+					"enum": [
+						"jpeg",
+						"png",
+						"webp"
+					],
+					"type": "string",
+					"x-ui": {
+						"order": 20,
+						"widget": "select"
+					}
+				},
+				"prompt": {
+					"description": "Describe the subject, composition, lighting, and any wording to render.",
+					"maxLength": 5000,
+					"minLength": 1,
+					"type": "string",
+					"x-ui": {
+						"order": 100,
+						"widget": "textarea"
+					}
+				},
+				"resolution": {
+					"default": "1k",
+					"description": "Output resolution tier.",
+					"enum": [
+						"1k",
+						"1.5k",
+						"2k"
+					],
+					"type": "string",
+					"x-ui": {
+						"affects_price": true,
+						"order": 70,
+						"widget": "radio"
+					}
+				},
+				"seed": {
+					"description": "Random seed for controlled comparisons.",
+					"maximum": 2147483647,
+					"minimum": 0,
+					"type": "integer",
+					"x-ui": {
+						"order": 10,
+						"widget": "number"
+					}
+				}
+			},
+			"required": [
+				"prompt",
+				"image_urls"
+			],
+			"type": "object",
+			"x-pricing": {
+				"billingMode": "formula",
+				"variantFields": [
+					"resolution"
+				]
+			}
+		}
+	}
+}
