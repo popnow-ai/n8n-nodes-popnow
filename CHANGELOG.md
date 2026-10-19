@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1
+
+- Published from GitHub Actions with npm provenance, as required for n8n verified community nodes.
+- The npm README now installs from npm instead of GitHub.
+
 ## 0.1.0
 
 First release, published on npm as `n8n-nodes-popnow`.
