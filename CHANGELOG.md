@@ -2,7 +2,7 @@
 
 ## 0.1.0
 
-First release (install from GitHub; the npm release is coming).
+First release, published on npm as `n8n-nodes-popnow`.
 
 - **PopNow** node with Image, Video and Audio > Generate: model picker with credit prices, prompt, media
   inputs from binary data or URLs (uploaded automatically), a parameter form generated from each model's

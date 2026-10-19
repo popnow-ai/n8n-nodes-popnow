@@ -47,11 +47,12 @@ generated from its schema, and get the finished file back as n8n binary data.
 
 ## Quickstart
 
-**1. Install** the node on self-hosted n8n and restart n8n:
+**1. Install** the node on self-hosted n8n: open **Settings > Community Nodes > Install**, enter
+`n8n-nodes-popnow` and confirm. Or from a shell, then restart n8n:
 
 ```bash
 mkdir -p ~/.n8n/nodes && cd ~/.n8n/nodes
-npm install github:popnow-ai/n8n-nodes-popnow#release
+npm install n8n-nodes-popnow
 ```
 
 **2. Connect** your account: create a **PopNow API** credential with a key from
@@ -66,15 +67,15 @@ npm install github:popnow-ai/n8n-nodes-popnow#release
 Unverified community nodes run on **self-hosted** n8n. On n8n Cloud, use the
 [HTTP Request workflow](#alternative-http-request-workflow-no-install) instead.
 
-The `release` branch of this repository holds the built package (it is rebuilt from `main` by
-[GitHub Actions](.github/workflows/release-branch.yml)), so npm installs it without a build step. Git must
-be available where you run `npm install`.
+The package is on npm as [`n8n-nodes-popnow`](https://www.npmjs.com/package/n8n-nodes-popnow). The easiest
+way in is **Settings > Community Nodes > Install** in the n8n editor; the shell and Docker methods below do
+the same thing.
 
 ### npm / bare-metal n8n
 
 ```bash
 mkdir -p ~/.n8n/nodes && cd ~/.n8n/nodes
-npm install github:popnow-ai/n8n-nodes-popnow#release
+npm install n8n-nodes-popnow
 # then restart n8n
 ```
 
@@ -88,7 +89,7 @@ The official image keeps `~/.n8n` on the `/home/node/.n8n` volume, so a package 
 image upgrades:
 
 ```bash
-docker exec -it n8n sh -c 'mkdir -p ~/.n8n/nodes && cd ~/.n8n/nodes && npm install github:popnow-ai/n8n-nodes-popnow#release'
+docker exec -it n8n sh -c 'mkdir -p ~/.n8n/nodes && cd ~/.n8n/nodes && npm install n8n-nodes-popnow'
 docker restart n8n
 ```
 
@@ -106,7 +107,7 @@ USER root
 RUN mkdir -p /opt/n8n-custom-nodes \
  && cd /opt/n8n-custom-nodes \
  && npm init -y > /dev/null \
- && npm install --omit=dev github:popnow-ai/n8n-nodes-popnow#release \
+ && npm install --omit=dev n8n-nodes-popnow \
  && chown -R node:node /opt/n8n-custom-nodes
 USER node
 
@@ -286,9 +287,8 @@ from a URL; binary files are uploaded for you.
 
 ### Is there an official PopNow community node for n8n?
 
-Yes, this repository. It is not on npm yet, so install it from GitHub
-(`npm install github:popnow-ai/n8n-nodes-popnow#release` in `~/.n8n/nodes`). The npm release, which enables
-install from n8n's Community nodes screen, is coming.
+Yes, this repository, published on npm as `n8n-nodes-popnow`. On self-hosted n8n, install it from
+**Settings > Community Nodes** or with `npm install n8n-nodes-popnow` in `~/.n8n/nodes`.
 
 ### Can I use PopNow on n8n Cloud?
 

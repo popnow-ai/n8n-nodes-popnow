@@ -4,7 +4,7 @@
 
 ## Install
 
-- Self-hosted n8n: `cd ~/.n8n/nodes && npm install github:popnow-ai/n8n-nodes-popnow#release`, then restart n8n. The `release` branch holds the built package.
+- Self-hosted n8n: Settings > Community Nodes > Install `n8n-nodes-popnow`, or `cd ~/.n8n/nodes && npm install n8n-nodes-popnow`, then restart n8n.
 - Docker: run the same command inside the container (`docker exec`), or build a custom image that installs it under /opt and sets `N8N_CUSTOM_EXTENSIONS`.
 - n8n Cloud or no install: import `examples/http-request-workflow.json` (built-in HTTP Request, Wait, If and Set nodes) with a Header Auth credential `Authorization: Bearer sk-popnow-...`.
 
