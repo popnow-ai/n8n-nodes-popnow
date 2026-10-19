@@ -3,7 +3,7 @@ export const CREDENTIAL_NAME = 'popNowApi';
 export const DEFAULT_BASE_URL = 'https://api.popnow.ai';
 
 /** Kept in step with package.json by a unit test. */
-export const PACKAGE_VERSION = '0.1.0';
+export const PACKAGE_VERSION = '0.1.1';
 
 /** The API rejects generic client User-Agents, so every request names this package. */
 export const USER_AGENT = `n8n-nodes-popnow/${PACKAGE_VERSION} (+https://github.com/popnow-ai/n8n-nodes-popnow)`;

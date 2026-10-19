@@ -54,7 +54,7 @@ export class PopNowApi implements ICredentialType {
 			url: '/api/v1/chat/credit',
 			method: 'GET',
 			headers: {
-				'User-Agent': 'n8n-nodes-popnow/0.1.0 (+https://github.com/popnow-ai/n8n-nodes-popnow)',
+				'User-Agent': 'n8n-nodes-popnow/0.1.1 (+https://github.com/popnow-ai/n8n-nodes-popnow)',
 			},
 		},
 	};
