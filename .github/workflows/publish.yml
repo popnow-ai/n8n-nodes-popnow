@@ -1,0 +1,36 @@
+name: Publish to npm
+
+# Runs when a version tag (v1.2.3) is pushed. Uses npm trusted publishing (OIDC), so no npm
+# token is stored in this repository, and the package gets a provenance statement.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          # Trusted publishing needs npm 11.5.1 or later, which ships with Node 24.
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          cache: npm
+      - name: Tag matches the package version
+        run: |
+          version=$(node -p "require('./package.json').version")
+          test "v$version" = "$GITHUB_REF_NAME" || { echo "Tag $GITHUB_REF_NAME does not match version $version"; exit 1; }
+      - run: npm ci --ignore-scripts
+      - name: Lint (n8n community node rules)
+        run: npm run lint
+      - name: Build and test
+        run: npm test
+      - run: npm publish --access public
