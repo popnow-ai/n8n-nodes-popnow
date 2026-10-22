@@ -1,0 +1,11 @@
+import type { IDataObject } from 'n8n-workflow';
+export declare const ACTIVE_STATES: Set<string>;
+export declare const KNOWN_TERMINAL_STATES: Set<string>;
+export declare function isTerminal(state: unknown): boolean;
+export declare function outputAssets(task: IDataObject): IDataObject[];
+export declare function outputText(task: IDataObject): string | undefined;
+export declare function hasPendingAssets(task: IDataObject): boolean;
+export declare function isSettledForOutput(task: IDataObject): boolean;
+export declare function extensionForMime(mime: unknown): string;
+export declare function binaryKeyFor(base: string, index: number): string;
+export declare function taskFailureHint(errorCode: unknown): string;

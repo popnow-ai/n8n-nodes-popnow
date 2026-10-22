@@ -1,0 +1,13 @@
+export declare const CREDENTIAL_NAME = "popNowApi";
+export declare const DEFAULT_BASE_URL = "https://api.popnow.ai";
+export declare const PACKAGE_VERSION = "0.1.1";
+export declare const USER_AGENT = "n8n-nodes-popnow/0.1.1 (+https://github.com/popnow-ai/n8n-nodes-popnow)";
+export declare const MODALITY_BY_RESOURCE: Record<string, string | undefined>;
+export declare const DEFAULT_MAX_CREDITS = 2000;
+export declare const SERVER_WAIT_SECONDS = 50;
+export declare const SERVER_WAIT_MODALITIES: Set<string>;
+export declare const POLL_INITIAL_MS = 2000;
+export declare const POLL_MAX_MS = 10000;
+export declare const POLL_FACTOR = 1.5;
+export declare const DEADLINE_GRACE_SECONDS = 300;
+export declare const FALLBACK_TASK_TIMEOUT_SECONDS = 3600;
