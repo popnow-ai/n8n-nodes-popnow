@@ -214,16 +214,16 @@ describe('startingPriceText', () => {
 
 	it('formats the credit price the model list shows', () => {
 		assert.equal(
-			startingPriceText({ credits: { unit: 'per_image', perUnit: 2 } }),
-			'from 2 credits/image',
+			startingPriceText({ credits: { unit: 'per_image', perUnit: 10 } }),
+			'from 10 credits/image',
 		);
 		assert.equal(
 			startingPriceText({ credits: { unit: 'per_second', perUnit: 1 } }),
 			'from 1 credit/s',
 		);
 		assert.equal(
-			startingPriceText({ credits: { unit: 'per_1k_characters', perUnit: 3 } }),
-			'from 3 credits/1K chars',
+			startingPriceText({ credits: { unit: 'per_1k_characters', perUnit: 72 } }),
+			'from 72 credits/1K chars',
 		);
 		assert.equal(startingPriceText({}), '');
 	});

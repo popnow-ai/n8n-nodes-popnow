@@ -294,7 +294,7 @@ export const inputProperties: INodeProperties[] = [
 		typeOptions: { minValue: 0, numberPrecision: 0 },
 		default: DEFAULT_MAX_CREDITS,
 		description:
-			'Every item is priced in credits (1 credit = $0.01) before it runs. When the quote is higher than this, the node stops with an error and nothing is charged. 0 removes the limit.',
+			'Every item is priced in credits (1 credit = $0.001) before it runs. When the quote is higher than this, the node stops with an error and nothing is charged. 0 removes the limit.',
 		displayOptions: { show: showForGenerate },
 	},
 	{

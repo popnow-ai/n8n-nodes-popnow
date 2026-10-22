@@ -15,7 +15,7 @@
 
 ## Node operations
 
-- Image / Video / Audio > Generate: `POST /api/v1/jobs/quote` -> per-item credit limit (default 200 credits) -> `POST /api/v1/jobs/createTask` (Idempotency-Key, quoteId, expectedCredits, optional callBackUrl and X-PopNow-Retention; `?wait=50` for image and audio) -> poll `GET /api/v1/jobs/recordInfo` -> download `output.assets[].url` into binary fields `data`, `data_1`, ...
+- Image / Video / Audio > Generate: `POST /api/v1/jobs/quote` -> per-item credit limit (default 2,000 credits) -> `POST /api/v1/jobs/createTask` (Idempotency-Key, quoteId, expectedCredits, optional callBackUrl and X-PopNow-Retention; `?wait=50` for image and audio) -> poll `GET /api/v1/jobs/recordInfo` -> download `output.assets[].url` into binary fields `data`, `data_1`, ...
 - Task > Get (`jobs/recordInfo`, optional wait and download); Task > Retry (`POST /api/v1/jobs/retry`).
 - File > Upload: `POST /api/v1/common/upload-url`, PUT to the signed URL, `POST /api/v1/files/{fileId}/commit` -> `popnow://f/fil_...`.
 - Model > Get Many (`GET /api/v1/models`), Get (`GET /api/v1/models/{model}`), Get Quote (`jobs/quote`).
@@ -24,7 +24,7 @@
 ## Facts
 
 - Model IDs look like `<maker>/<model>/<task>`, e.g. `alibaba/z-image-turbo/text-to-image`, `kling/3.0/image-to-video`, `suno/v6/text-to-audio`.
-- 1 credit = $0.01; same prices and wallet as popnow.ai; failed or expired tasks are refunded.
+- 1 credit = $0.001; same prices and wallet as popnow.ai; failed or expired tasks are refunded.
 - Responses use the envelope `{code,msg,data,request_id}`; branch on `code`, never on `msg`.
 - Output links are signed and last about 20 minutes; the node downloads them without the API key.
 

@@ -16,8 +16,8 @@ export const MODALITY_BY_RESOURCE: Record<string, string | undefined> = {
 	model: undefined,
 };
 
-/** Default per-item limit, in credits (1 credit = $0.01). */
-export const DEFAULT_MAX_CREDITS = 200;
+/** Default per-item limit, in credits (1 credit = $0.001, so 2,000 credits = $2). */
+export const DEFAULT_MAX_CREDITS = 2000;
 
 /** createTask may hold the connection until the task is done; the API clamps this at 60. */
 export const SERVER_WAIT_SECONDS = 50;

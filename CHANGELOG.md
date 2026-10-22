@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Prices follow PopNow's new credit unit: 1 credit = $0.001 (it was $0.01 before 2026-10-19), so prices in
+  credits are larger numbers than before (a 5-second MiniMax H3 clip at 768p is 185 credits). The default **Max Credits per Item** is now 2,000 credits,
+  the same $2 as before; a limit you typed in yourself keeps its number, so multiply it by ten to keep its
+  dollar value. USD amounts without a credit figure are converted at the new rate.
+
 ## 0.1.1
 
 - Published from GitHub Actions with npm provenance, as required for n8n verified community nodes.

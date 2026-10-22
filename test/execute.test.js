@@ -34,7 +34,7 @@ const finishedTask = {
 	taskId: 'job_1',
 	model: T2I,
 	state: 'succeeded',
-	cost: '0.01',
+	cost: '0.002',
 	settled: true,
 	output: {
 		assets: [
@@ -48,7 +48,7 @@ describe('Generate', () => {
 		const api = fakeApi({
 			[`GET /api/v1/models/${T2I}`]: [modelResponse(T2I)],
 			'POST /api/v1/jobs/quote': [
-				response(200, envelope({ quoteId: 'q1', maxCredits: 250, maxCharge: '2.5' })),
+				response(200, envelope({ quoteId: 'q1', maxCredits: 250, maxCharge: '0.25' })),
 			],
 		});
 		const context = fakeExecuteContext({ params: imageParams(), api });
@@ -65,7 +65,7 @@ describe('Generate', () => {
 			const api = fakeApi({
 				[`GET /api/v1/models/${T2I}`]: [modelResponse(T2I)],
 				'POST /api/v1/jobs/quote': [
-					response(200, envelope({ quoteId: 'q1', maxCredits: 2, maxCharge: '0.02' })),
+					response(200, envelope({ quoteId: 'q1', maxCredits: 2, maxCharge: '0.002' })),
 				],
 				'POST /api/v1/jobs/createTask': [response(200, envelope(finishedTask))],
 				'GET /job_1.png': [response(200, PNG, { 'content-type': 'image/png' })],
@@ -355,9 +355,9 @@ describe('Task', () => {
 describe('Account and models', () => {
 	it('reads the balance from the credit endpoint', async () => {
 		const balance = {
-			available: '12.34',
-			held: '0.50',
-			total: '12.84',
+			available: '1.234',
+			held: '0.050',
+			total: '1.284',
 			availableCredits: 1234,
 			heldCredits: 50,
 			totalCredits: 1284,

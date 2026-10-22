@@ -29,7 +29,7 @@ function unitLabel(unit: unknown): string {
 	return UNIT_LABELS[unit] ?? ` ${unit.replace(/^per_/, 'per ').replace(/_/g, ' ')}`;
 }
 
-/** "from 2 credits/image" for the model picker, from the model's `credits` price. */
+/** "from 10 credits/image" for the model picker, from the model's `credits` price. */
 export function startingPriceText(model: IDataObject): string {
 	const price = model.credits as IDataObject | undefined;
 	if (!price || typeof price !== 'object' || typeof price.perUnit !== 'number') {

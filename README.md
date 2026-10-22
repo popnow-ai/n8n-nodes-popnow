@@ -59,7 +59,7 @@ npm install n8n-nodes-popnow
 [popnow.ai/api/console/keys](https://popnow.ai/api/console/keys) (`sk-popnow-...`).
 
 **3. Generate:** add the **PopNow** node, choose **Image > Generate**, pick
-`alibaba/z-image-turbo/text-to-image` (about 2 credits), type a prompt and run it. The image arrives in the
+`alibaba/z-image-turbo/text-to-image` (about 10 credits), type a prompt and run it. The image arrives in the
 `data` binary field, ready for Google Drive, S3, Slack or any other node.
 
 ## Installation
@@ -205,8 +205,8 @@ Large videos are held in memory unless n8n stores binary data on disk. On self-h
 ## Credit limits and retries
 
 - **Every item is priced first.** The node calls `jobs/quote`, and when the quote is above **Max Credits per
-  Item** (default 200 credits = $2) it stops with an error before anything is created. Nothing is charged.
-  Set the limit to 0 to remove it. 1 credit = $0.01.
+  Item** (default 2,000 credits = $2) it stops with an error before anything is created. Nothing is charged.
+  Set the limit to 0 to remove it. 1 credit = $0.001.
 - **The task is created at the quoted price.** The node sends `quoteId` and `expectedCredits` with
   `createTask`. If the price changed in between (code `40901`), it quotes again, checks the limit again and
   resubmits under the same key.
@@ -265,7 +265,7 @@ If you cannot install community nodes (for example on n8n Cloud), import
 2. Copy the JSON file's contents, click an empty spot on the canvas and paste (or use
    **Workflow menu > Import from File**).
 3. Select the `PopNow` credential in **Create task** and **Check task**, then run it. The example uses
-   `alibaba/z-image-turbo/text-to-image` and costs about 2 credits.
+   `alibaba/z-image-turbo/text-to-image` and costs about 10 credits.
 
 To change the model or the input, edit the JSON body of **Create task**. The
 [n8n guide on popnow.ai](https://popnow.ai/docs/n8n) explains each node, webhooks instead of polling, and
@@ -298,7 +298,7 @@ nodes.
 
 ### How much does a generation cost, and can I cap it?
 
-Prices are in credits (1 credit = $0.01), the same as on popnow.ai. Every item is quoted first and the node
+Prices are in credits (1 credit = $0.001), the same as on popnow.ai. Every item is quoted first and the node
 refuses to run anything above **Max Credits per Item**. Use **Model > Get Quote** to price a request without
 running it. Failed runs are refunded. See [pricing](https://popnow.ai/pricing).
 

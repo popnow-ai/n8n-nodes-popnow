@@ -1,5 +1,5 @@
 /**
- * Prices on PopNow are in credits (1 credit = $0.01). The API returns every amount both as an
+ * Prices on PopNow are in credits (1 credit = $0.001). The API returns every amount both as an
  * integer number of credits (`maxCredits`, `estimatedCredits`, `credits`) and as the same amount
  * in US dollars as a decimal string (`maxCharge`, `estimatedCost`, `cost`).
  */
@@ -22,8 +22,8 @@ export function usdToCredits(value: unknown): number | undefined {
 	if (usd === undefined) {
 		return undefined;
 	}
-	// Round to micro-dollars first so float noise ("0.68" -> 67.99999) does not add a credit.
-	return Math.ceil(Math.round(usd * 1e6) / 1e4);
+	// Round to micro-dollars first so float noise ("0.068" -> 67.99999) does not add a credit.
+	return Math.ceil(Math.round(usd * 1e6) / 1e3);
 }
 
 /** "1 credit", "68 credits". */

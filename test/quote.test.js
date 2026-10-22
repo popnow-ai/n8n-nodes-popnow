@@ -10,7 +10,7 @@ const { checkQuoteLimit, formatCredits, parseAmount, quoteCeiling, usdToCredits 
 
 describe('checkQuoteLimit', () => {
 	it('passes a quote under the limit', () => {
-		assert.deepEqual(checkQuoteLimit({ maxCredits: 2, maxCharge: '0.02' }, 200), {
+		assert.deepEqual(checkQuoteLimit({ maxCredits: 2, maxCharge: '0.002' }, 200), {
 			ok: true,
 			ceiling: 2,
 		});
@@ -21,7 +21,7 @@ describe('checkQuoteLimit', () => {
 	});
 
 	it('stops a quote above the limit and says nothing was charged', () => {
-		const result = checkQuoteLimit({ maxCredits: 240, maxCharge: '2.4' }, 200);
+		const result = checkQuoteLimit({ maxCredits: 240, maxCharge: '0.24' }, 200);
 		assert.equal(result.ok, false);
 		assert.match(result.message, /up to 240 credits/);
 		assert.match(result.message, /limit of 200 credits/);
@@ -29,15 +29,15 @@ describe('checkQuoteLimit', () => {
 	});
 
 	it('uses maxCredits over the other amounts when present', () => {
-		assert.equal(quoteCeiling({ maxCredits: 68, expectedCredits: 40, maxCharge: '0.10' }), 68);
+		assert.equal(quoteCeiling({ maxCredits: 68, expectedCredits: 40, maxCharge: '0.010' }), 68);
 		assert.equal(checkQuoteLimit({ maxCredits: 250, expectedCredits: 150 }, 200).ok, false);
 	});
 
 	it('falls back to the USD ceiling, converted to credits and rounded up', () => {
-		assert.equal(quoteCeiling({ maxCharge: '0.68' }), 68);
-		assert.equal(quoteCeiling({ estimatedCost: '0.015' }), 2);
+		assert.equal(quoteCeiling({ maxCharge: '0.068' }), 68);
+		assert.equal(quoteCeiling({ estimatedCost: '0.0015' }), 2);
 		assert.equal(checkQuoteLimit({ maxCharge: '3' }, 200).ok, false);
-		assert.equal(checkQuoteLimit({ estimatedCost: '0.5' }, 200).ok, true);
+		assert.equal(checkQuoteLimit({ estimatedCost: '0.15' }, 200).ok, true);
 	});
 
 	it('treats a limit of 0 as no limit', () => {
@@ -68,8 +68,8 @@ describe('formatCredits, parseAmount and usdToCredits', () => {
 	});
 
 	it('is not fooled by floating point noise', () => {
-		assert.equal(usdToCredits(String(0.1 + 0.2)), 30);
-		assert.equal(usdToCredits('0.68'), 68);
-		assert.equal(usdToCredits('0.001'), 1);
+		assert.equal(usdToCredits(String(0.1 + 0.2)), 300);
+		assert.equal(usdToCredits('0.068'), 68);
+		assert.equal(usdToCredits('0.0001'), 1);
 	});
 });
