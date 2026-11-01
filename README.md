@@ -13,7 +13,8 @@
 <p align="center">
   <strong><code>n8n-nodes-popnow</code> is the n8n community node for PopNow</strong>, a single API for AI
   video, image, music and speech generation with models such as Kling, Seedance, Wan, Vidu, MiniMax,
-  Nano Banana, GPT Image, Flux and Suno, priced in credits before every run.
+  Nano Banana, GPT Image, Flux and Suno, quoted before every run and paid in US dollars from your PopNow
+  API balance.
 </p>
 
 <p align="center">
@@ -25,9 +26,11 @@
 </p>
 
 PopNow is a browser-based AI studio for videos, images and music: image-to-video, text-to-video, AI images,
-music and speech, one-tap trending video effects and image styles. This node brings the same models, prices
-and credit wallet as [popnow.ai](https://popnow.ai) into [n8n](https://n8n.io): pick a model, fill in a form
-generated from its schema, and get the finished file back as n8n binary data.
+music and speech, one-tap trending video effects and image styles. This node brings the PopNow developer API
+and its models into [n8n](https://n8n.io): pick a model, fill in a form generated from its schema, and get the
+finished file back as n8n binary data. Runs are paid in US dollars from your prepaid PopNow API balance, which
+is separate from popnow.ai website credits; add funds at
+[popnow.ai/api/console/billing](https://popnow.ai/api/console/billing).
 
 > **Install status:** the npm release (and with it one-click install from n8n's **Community nodes** screen)
 > is coming. Until then, install it manually from GitHub as shown below, or use the
@@ -38,7 +41,7 @@ generated from its schema, and get the finished file back as n8n binary data.
 - [Credentials](#credentials)
 - [Operations](#operations)
 - [Generating images, video and audio](#generating-images-video-and-audio)
-- [Credit limits and retries](#credit-limits-and-retries)
+- [Spending limits and retries](#spending-limits-and-retries)
 - [Long-running tasks](#long-running-tasks)
 - [Errors](#errors)
 - [Alternative: HTTP Request workflow (no install)](#alternative-http-request-workflow-no-install)
@@ -56,10 +59,11 @@ npm install n8n-nodes-popnow
 ```
 
 **2. Connect** your account: create a **PopNow API** credential with a key from
-[popnow.ai/api/console/keys](https://popnow.ai/api/console/keys) (`sk-popnow-...`).
+[popnow.ai/api/console/keys](https://popnow.ai/api/console/keys) (`sk-popnow-...`), and add funds to your API
+balance at [popnow.ai/api/console/billing](https://popnow.ai/api/console/billing).
 
 **3. Generate:** add the **PopNow** node, choose **Image > Generate**, pick
-`alibaba/z-image-turbo/text-to-image` (about 10 credits), type a prompt and run it. The image arrives in the
+`alibaba/z-image-turbo/text-to-image` (about $0.01), type a prompt and run it. The image arrives in the
 `data` binary field, ready for Google Drive, S3, Slack or any other node.
 
 ## Installation
@@ -145,8 +149,8 @@ Create a **PopNow API** credential:
 | API Key | A key from [popnow.ai/api/console/keys](https://popnow.ai/api/console/keys). It starts with `sk-popnow-`. |
 | Base URL | Leave `https://api.popnow.ai` unless PopNow support tells you otherwise. |
 
-Saving the credential checks the key by reading your balance (`GET /api/v1/chat/credit`; the path name is
-historical and has nothing to do with chat), which is free.
+Saving the credential checks the key by reading your API balance (`GET /api/v1/chat/credit`; the path name
+is historical and has nothing to do with chat), which is free.
 Give n8n its own key with a spend cap in the API console: automations can run far more often than a person
 clicks.
 
@@ -160,10 +164,14 @@ clicks.
 | Task | Get | Read a task by ID, optionally wait for it and download its files | `GET /api/v1/jobs/recordInfo` |
 | Task | Retry | Create a new task from a failed or expired one, optionally wait and download | `POST /api/v1/jobs/retry` |
 | File | Upload | Upload a binary file and get a `popnow://f/...` URI to use as model input | `common/upload-url`, PUT, `files/{id}/commit` |
-| Model | Get Many | The model catalogue with credit prices, filtered by modality and keyword | `GET /api/v1/models` |
-| Model | Get | One model with its input schema, examples and credit price | `GET /api/v1/models/{model}` |
-| Model | Get Quote | The exact price of a request in credits, without running it | `POST /api/v1/jobs/quote` |
-| Account | Get Balance | Available, held and total balance in credits and US dollars | `GET /api/v1/chat/credit` |
+| Model | Get Many | The model catalogue with USD rates (`usd`), filtered by modality and keyword | `GET /api/v1/models` |
+| Model | Get | One model with its input schema, examples and USD rates | `GET /api/v1/models/{model}` |
+| Model | Get Quote | The exact price of a request in USD (`maxChargeUsd`, `expectedChargeUsd`), without running it | `POST /api/v1/jobs/quote` |
+| Account | Get Balance | Available, held and total API balance in USD (`availableUsd`, `heldUsd`, `totalUsd`) | `GET /api/v1/chat/credit` |
+
+USD amounts (`maxChargeUsd`, `costUsd`, `availableUsd` and so on) are exact decimal strings. Responses also
+carry older `*Credits` fields: a deprecated projection at 1 credit = $0.001, kept for compatibility. Read
+the USD fields in new workflows.
 
 The node is marked **usable as a tool**, so an n8n AI Agent can call it too.
 
@@ -182,8 +190,9 @@ Every image, video and audio model on PopNow works with the same node. A model I
 
 ## Generating images, video and audio
 
-1. **Model**: pick from the list (models of the selected resource with their starting price in credits) or
-   enter a model ID. Every model, its fields and price are listed at [popnow.ai/models](https://popnow.ai/models).
+1. **Model**: pick from the list (models of the selected resource with their starting price; this version
+   of the node shows it in credits, where 1 credit = $0.001) or enter a model ID. Every model, its fields and
+   USD price are listed at [popnow.ai/api/models](https://popnow.ai/api/models).
 2. **Prompt**: the model's main text input. For speech models this is the text to speak. Leave it empty for
    models without a prompt, such as upscalers.
 3. **Media Inputs**: images, videos or audio the model reads. Pick the field (the list shows the selected
@@ -195,27 +204,31 @@ Every image, video and audio model on PopNow works with the same node. A model I
    seed and so on). Fields left empty are not sent, so the model uses its own default.
 5. **Additional Parameters (JSON)**: any other input fields as a JSON object. They override the fields above.
 
-The output is the task record (`taskId`, `state`, `credits`, `cost`, `settled`, `output`) and, with
+The output is the task record (`taskId`, `state`, `costUsd`, `settled`, `output`; `costUsd` is the USD hold
+while `settled` is false and the final USD charge once it is true) and, with
 **Download Output** on (the default), the files as binary data in `data`, `data_1` and so on. Links in
 `output.assets[].url` expire after about 20 minutes; the binary copies do not.
 
 Large videos are held in memory unless n8n stores binary data on disk. On self-hosted n8n, set
 `N8N_DEFAULT_BINARY_DATA_MODE=filesystem` when you work with video.
 
-## Credit limits and retries
+## Spending limits and retries
 
-- **Every item is priced first.** The node calls `jobs/quote`, and when the quote is above **Max Credits per
-  Item** (default 2,000 credits = $2) it stops with an error before anything is created. Nothing is charged.
-  Set the limit to 0 to remove it. 1 credit = $0.001.
-- **The task is created at the quoted price.** The node sends `quoteId` and `expectedCredits` with
-  `createTask`. If the price changed in between (code `40901`), it quotes again, checks the limit again and
-  resubmits under the same key.
+- **Every item is priced first.** The node calls `jobs/quote`, and when the quote's maximum is above
+  **Max Credits per Item** it stops with an error before anything is created. Nothing is charged. The limit
+  is set in credits, where 1 credit = $0.001 of API balance: the default of 2,000 is $2.00 per item, and 0
+  removes the limit.
+- **The task is created at the quoted price.** The node sends the `quoteId` with `createTask`, together with
+  the quote's maximum as `expectedCredits` (the API's credit projection of `maxChargeUsd`, rounded up). If the
+  price changed in between (code `40901`), it quotes again, checks the limit again and resubmits under the
+  same key. Calling the API yourself? Confirm with `expectedCostUsd` set to the quote's `maxChargeUsd`, as in
+  the [billing guide](https://popnow.ai/docs/billing).
 - **Retries never charge twice.** Each item is sent with an `Idempotency-Key` derived from the execution, the
   node, the item and its input. When n8n retries the node (Retry On Fail) or a request times out and is
   resent, PopNow returns the task it already created. A new execution, a changed input or another loop pass
   is new work and gets a new key.
-- **Failed runs are refunded.** Failed and expired tasks release their hold. See
-  [credits and refunds](https://popnow.ai/docs/credits-and-refunds).
+- **Failed runs are not charged.** Failed and expired tasks release their USD hold back to your API balance.
+  See [API balance and refunds](https://popnow.ai/docs/api-balance-and-refunds).
 - **Retention:** the **Retention (Seconds)** option sends `X-PopNow-Retention` to delete a task's prompt and
   files sooner than your account default.
 
@@ -244,8 +257,8 @@ item with `error`, `description` and `taskId` instead of stopping the workflow.
 | Code | Meaning | What to do |
 | --- | --- | --- |
 | `401` | The API key is missing or invalid | Check the credential |
-| `40201` | Not enough credits for the task's hold | Buy credits at [popnow.ai/pricing](https://popnow.ai/pricing) |
-| `40202` | The key's spend cap was reached | Raise the cap in the API console |
+| `40201` | Not enough API balance for the task's hold | Add funds at [popnow.ai/api/console/billing](https://popnow.ai/api/console/billing); website credits do not pay for API calls |
+| `40202` | The key's USD spend cap was reached | Raise the cap in the API console |
 | `40301` | The key may not call this model | Allow the model for the key |
 | `40901` | The price changed between quote and create | Handled automatically once; run again otherwise |
 | `429` | Too many requests | Run fewer items in parallel; see [limits](https://popnow.ai/docs/limits) |
@@ -265,7 +278,7 @@ If you cannot install community nodes (for example on n8n Cloud), import
 2. Copy the JSON file's contents, click an empty spot on the canvas and paste (or use
    **Workflow menu > Import from File**).
 3. Select the `PopNow` credential in **Create task** and **Check task**, then run it. The example uses
-   `alibaba/z-image-turbo/text-to-image` and costs about 10 credits.
+   `alibaba/z-image-turbo/text-to-image` and costs about $0.01 from your API balance.
 
 To change the model or the input, edit the JSON body of **Create task**. The
 [n8n guide on popnow.ai](https://popnow.ai/docs/n8n) explains each node, webhooks instead of polling, and
@@ -298,9 +311,11 @@ nodes.
 
 ### How much does a generation cost, and can I cap it?
 
-Prices are in credits (1 credit = $0.001), the same as on popnow.ai. Every item is quoted first and the node
-refuses to run anything above **Max Credits per Item**. Use **Model > Get Quote** to price a request without
-running it. Failed runs are refunded. See [pricing](https://popnow.ai/pricing).
+Each model has a USD rate, and runs are paid from your prepaid PopNow API balance (separate from popnow.ai
+website credits). Every item is quoted first and the node refuses to run anything above
+**Max Credits per Item** (1 credit = $0.001, so the default of 2,000 is $2.00). Use **Model > Get Quote** to
+price a request in USD without running it. Failed runs are not charged. See
+[API pricing](https://popnow.ai/api/pricing) and the [billing guide](https://popnow.ai/docs/billing).
 
 ### Will a retried n8n node charge me twice?
 
@@ -325,12 +340,14 @@ Tests never call the live API. `test/repo-guard.test.js` also checks that every 
 
 ## Links
 
-- Website: [popnow.ai](https://popnow.ai) · Pricing: [popnow.ai/pricing](https://popnow.ai/pricing)
+- Website: [popnow.ai](https://popnow.ai) · API pricing: [popnow.ai/api/pricing](https://popnow.ai/api/pricing) ·
+  Add funds: [popnow.ai/api/console/billing](https://popnow.ai/api/console/billing)
 - Docs: [popnow.ai/docs](https://popnow.ai/docs) · n8n guide: [popnow.ai/docs/n8n](https://popnow.ai/docs/n8n) ·
   API reference: [popnow.ai/docs/openapi.yaml](https://popnow.ai/docs/openapi.yaml) · [llms.txt](https://popnow.ai/llms.txt)
-- MCP server for AI assistants: [popnow.ai/mcp](https://popnow.ai/mcp)
+- Developer MCP server (API key, USD): [popnow.ai/api/mcp](https://popnow.ai/api/mcp) ·
+  Agent skills: [popnow.ai/api/skills](https://popnow.ai/api/skills)
 - Other PopNow repositories:
-  [popnow-mcp](https://github.com/popnow-ai/popnow-mcp) ·
+  [popnow-api-mcp](https://github.com/popnow-ai/popnow-api-mcp) ·
   [popnow-skills](https://github.com/popnow-ai/popnow-skills) ·
   [popnow-python](https://github.com/popnow-ai/popnow-python) ·
   [popnow-js](https://github.com/popnow-ai/popnow-js) ·
